@@ -15,13 +15,13 @@ export class DashboardScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {url: "https://www.google.com", date: new Date()};
+        this.state = {url: "", date: new Date()};
         AsyncStorage.getItem("dashboardurl").then(
             (url) => {
                 if (url === null) {
-                    url = "https://www.google.com";
+                    url = "";
                 }
-                url = "https://www.wikipedia.org/wiki/" + url;
+                url = "https://www.surveymonkey.com/results/" + url  + "/data-trends";
                 this.setState({url});
             }
         );
@@ -39,7 +39,7 @@ export class DashboardScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
-            title: "Coco Health",
+            title: "Dashboard",
             headerRight:
                 <Button
                     title="Reload"

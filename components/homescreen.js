@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, WebView, View, Button } from 'react-native';
-import { AsyncStorage } from "react-native"
-
+import {StyleSheet, WebView, View, Button} from 'react-native';
+import { AsyncStorage } from "react-native";
+import { NavigationEvents } from 'react-navigation';
 
 storeData = async (key, value) => {
     try {
@@ -15,7 +15,8 @@ export class HomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {url: "", date: new Date()};
+        this.state = {url: "", date: new Date(), key: 0};
+
         AsyncStorage.getItem("url").then(
             (url) => {
                 if (url === null) {
@@ -26,41 +27,17 @@ export class HomeScreen extends React.Component {
             }
         );
         this.webview = React.createRef();
-    }
 
-    componentDidMount() {
-        this.props.navigation.setParams({ reloadPage: this.reloadPage });
     }
 
     reloadPage = () => {
-        this.webview.current.reload();
+        this.setState({key: this.state.key + 1})
     }
-
-    static navigationOptions = ({ navigation }) => {
-        const { params = {} } = navigation.state;
-        return {
-            headerTitle: (
-                <Button
-                    title="Dashboard"
-                    onPress={() => navigation.navigate('Dashboard')}
-                />),
-            headerLeft: (
-                <Button
-                    title="Settings"
-                    onPress={() => navigation.navigate('Settings')}
-                />),
-            headerRight:
-                <Button
-                    title="Reload"
-                    onPress={() => params.reloadPage()}
-                />
-
-        }
-    };
 
     render() {
         return (
             <WebView
+                key={this.state.key}
                 ref={this.webview}
                 source={{uri: this.state.url}}
             />
@@ -89,3 +66,7 @@ const styles = StyleSheet.create({
         marginBottom: 40
     }
 });
+
+
+
+
