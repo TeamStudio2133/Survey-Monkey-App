@@ -1,51 +1,113 @@
 import React from 'react';
-import { AppRegistry, StyleSheet, Text, TextInput, View } from 'react-native';
+import {Text, Button, Image, TouchableHighlight, View} from 'react-native';
+import {HomeScreen} from "./components/homescreen"
+import {SettingsScreen} from "./components/settings"
+import {DashboardScreen} from "./components/dashboard"
 
 
-export default class App extends React.Component {
-  constructor(props) {
-      super(props);
-      this.state = {url: ''};
-  }
+import {
+    createMaterialTopTabNavigator,
+    createStackNavigator,
+    NavigationActions,
+    StackActions
+} from 'react-navigation';
 
-  render() {
-    return (
-      <View style={styles.container}>
-          <View style={[styles.header]}></View>
-          <View style={[styles.content]}>
-            <Text>Coco Health</Text>
-            <TextInput
-                style={{height: 40}}
-                placeholder="Enter your Survey Monkey URL:"
-                onChangeText={(url) => this.setState({url})}
-            />
-            <Text style={{padding: 10, fontSize: 12}}>
-                {this.state.url}
-            </Text>
-          </View>
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-      flexDirection: 'column',
-    backgroundColor: '#fff',
-  },
-    header: {
-        height: 40,
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        backgroundColor: '#03A9F4',
-        zIndex: 10
-    },
-    content: {
-        alignItems: 'center',
-        marginTop: 50,
-        marginBottom: 40
+const Content = createMaterialTopTabNavigator({
+    Home: { screen: HomeScreen },
+    Dashboard: { screen: DashboardScreen },
+},
+    {
+        tabBarOptions: {
+            activeTintColor:"#0f2b69",
+            indicatorStyle: {
+                backgroundColor:"#0f2b69"
+            },
+            labelStyle: {
+                color: "#0f2b69",
+                fontSize: 15,
+                fontWeight: "600"
+            },
+            style: {
+                backgroundColor: "#f9f9f9"
+            }
+        }
     }
+);
+
+const App = createStackNavigator({
+    Main: {
+        screen: Content,
+        navigationOptions: ({navigation}) => {
+            const { params = {} } = navigation.state;
+            return {
+                headerTitle: (
+                    <Image
+                        style={{
+                            flex: 1,
+                            resizeMode:"contain",
+                            opacity: 1,
+                            width: 20,
+                            height: 20}}
+                        source={require('./Images/new logo smaller.png')} />),
+                headerRight: (
+                    <TouchableHighlight
+                        color="#0f2b69"
+                        style={{
+                            marginRight: 20
+                        }}
+                        onPress={() => {
+                        navigation.dispatch(StackActions.reset({
+                            index: 0,
+                            actions: [NavigationActions.navigate({ routeName: 'Main' })],
+                        }))
+                        return null;
+                    }}>
+                        <View><Image source={require('./Images/reload.png')}/></View>
+                    </TouchableHighlight>
+                    ),
+                headerLeft:
+                    (
+                        <TouchableHighlight
+                            color="#0f2b69"
+                            style={{
+                                marginLeft: 20
+                            }}
+                            onPress={() => {
+
+                                navigation.navigate('Settings')
+                            }}>
+                            <View><Image source={require('./Images/WishList.png')}/></View>
+                        </TouchableHighlight>
+                    ),
+                headerStyle: {
+                    borderBottomWidth: 0,
+                }
+            }
+
+        }
+    }, // MainTab is itself a TabNavigator now
+    Settings: {
+        screen: SettingsScreen,
+        navigationOptions: ({navigation}) => {
+            return {
+                tabBarOptions: {
+                    activeTintColor: "#0f2b69",
+                    indicatorStyle: {
+                        backgroundColor: "#0f2b69"
+                    },
+                    labelStyle: {
+                        color: "#0f2b69"
+                    },
+                    style: {
+                        backgroundColor: "#f9f9f9",
+
+                    }
+                }
+            }
+        }
+    },
 });
+
+
+
+export default App;
